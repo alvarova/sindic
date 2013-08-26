@@ -1,0 +1,107 @@
+Listado de tablas del sistema del Sindicato, volcado de estructura de tabla por ODBC nativo, a traves de PHP 5.3
+
+Tabla: Afiliados
+ * array(46) { 
+	 * ["id_afiliado"]=> string(1) "1" 
+	 * ["id_farmacia"]=> string(3) "139" 
+	 * ["id_categoria"]=> string(5) "PRIM " 
+	 * ["id_parentesco"]=> string(1) "1" 
+	 * ["tipo_documento"]=> string(3) "DNI" 
+	 * ["nro_documento"]=> string(8) "26983085" 
+	 * ["nombre"]=> string(30) "ABBA ELIANA MARINA " 
+	 * ["sexo"]=> string(1) "F" 
+	 * ["domicilio"]=> string(25) "BATALLA DE TUCUMAN 2256 " 
+	 * ["localidad"]=> string(30) "SAN JUSTO " 
+	 * ["cod_postal"]=> string(4) "3040" 
+	 * ["nacionalidad"]=> string(15) "ARGENTINA " 
+	 * ["telefono"]=> string(12) " " 
+	 * ["fecha_nacimiento"]=> string(10) "1978-12-27" 
+	 * ["estado_civil"]=> string(20) "SOLTERO " 
+	 * ["cuil"]=> string(13) "27-26983085-4" 
+	 * ["sindicato"]=> string(1) "0" 
+	 * ["obra_social"]=> string(1) "0" 
+	 * ["mutual"]=> string(1) "0" 
+	 * ["sepelio"]=> string(1) "0" 
+	 * ["fecha_ingreso"]=> string(10) "1999-10-01" 
+	 * ["efectivo"]=> string(1) "1" 
+	 * ["contrato_desde"]=> string(10) "1899-12-30" 
+	 * ["contrato_hasta"]=> string(10) "1899-12-30" 
+	 * ["jornada_completa"]=> string(1) "1" 
+	 * ["dsnombre"]=> string(30) "PILOTTI WALTER JOSE " 
+	 * ["dsdomicilio"]=> string(25) "25 DE MAYO 2980 " 
+	 * ["dstelefono"]=> string(15) " " 
+	 * ["dslocalidad"]=> string(30) "SAN JUSTO " 
+	 * ["dscod_postal"]=> string(4) "3040" 
+	 * ["dsnacion"]=> string(15) "ARGENTINA " 
+	 * ["dstipo_documento"]=> string(3) "DNI" 
+	 * ["dsnro_documento"]=> string(8) "22662045" 
+	 * ["dsfecha_nacimiento"]=> string(10) "1972-03-23" 
+	 * ["firma_formulario"]=> string(1) "1" 
+	 * ["fecha_baja"]=> string(10) "2009-01-12" 
+	 * ["motivo_baja"]=> string(10) "RENUNCIA " 
+	 * ["sueldo"]=> string(7) "1788.16" 
+	 * ["sindicato_cuota"]=> string(1) "3" 
+	 * ["mutual_cuota"]=> string(2) "11" 
+	 * ["sindicato_ingreso"]=> string(10) "1999-10-01" 
+	 * ["mutual_ingreso"]=> string(10) "2000-02-01" 
+	 * ["observaciones"]=> string(278) "NO COBRA ASIG.FLIAR. POR LA HIJA Recibimos de la O.Scial. Central comunicación de la baja a partir del 25/11/2004. Traspaso de O.Scial. a la de Comisarios Navales, no sabemos a partir de cuando fue.- 18-03-2005 renuncia a MUTUAL. renuncia estimativa 01-01-2009. (18-02-2009)" 
+	 * ["adicional1"]=> string(1) "0" 
+	 * ["adicional2"]=> string(1) "0" 
+	 * ["os_ingreso"]=> string(10) "1899-12-30" 
+	 * }
+	 
+Tabla: familiares
+
+/*array(10) { 
+	["id_familiar"]=> string(1) "1" 
+	["id_parentesco"]=> string(2) "24" 
+	["id_afiliado"]=> string(3) "291" 
+	["nombre"]=> string(30) "ZALAZAR MARIANA ELISABET " 
+	["fecha_nacimiento"]=> string(10) "1982-07-03" 
+	["tipo_documento"]=> string(3) "DNI" 
+	["nro_documento"]=> string(8) "29529075" 
+	["sexo"]=> string(1) "F" 
+	["fecha_alta"]=> string(10) "2008-08-01" 
+	["incapacidad"]=> string(2) "00" 
+}*/
+
+Tabla: Farmacias
+
+
+array(12) { 
+		["id_farmacia"]=> string(1) "1" 
+		["cuit"]=> string(13) "20-71274098-1" 
+		["razon_social"]=> string(25) "SANTO ADRIANA " 
+		["nombre_titular"]=> string(30) "SANTO ADRIANA MARIA " 
+		["domicilio"]=> string(25) "ALTE. BROWN 1016 " 
+		["telefono"]=> string(12) "03401-480581" 
+		["fax"]=> string(12) " " 
+		["email"]=> string(40) " " 
+		["localidad"]=> string(30) "CARLOS PELLEGRINI " 
+		["cod_postal"]=> string(4) "2453" 
+		["iva"]=> string(1) " " 
+		["observaciones"]=> string(18) "abona cada 3 meses" 
+	} 
+
+
+
+Tabla: Parientes
+
+array(2) { 
+		["id_parentesco"]=> string(1) "1" 
+		["parentesco"]=> string(40) "CONYUGE " 
+} 
+	
+	
+Tabla: Categorias
+
+array(3) { 
+		["id_categoria"]=> string(5) "ADM " 
+		["descripcion"]=> string(25) "ADMINISTRATIVA " 
+		["basico"]=> string(7) "2326.04" 
+} 
+	
+	
+	
+	
+

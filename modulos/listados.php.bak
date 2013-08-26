@@ -1,0 +1,138 @@
+<?php
+	require_once("./library/PEAR.php");
+	require_once("./library/IT.php");
+
+	$mes['01']='Enero';$mes['02']='Febrero';$mes['03']='Marzo';$mes['04']='Abril';$mes['05']='Mayo';$mes['06']='Junio';
+	$mes['07']='Julio';$mes['08']='Agosto';$mes['09']='Septiembre';$mes['10']='Octubre';$mes['11']='Noviembre';$mes['12']='Diciembre';
+	error_reporting(E_ALL);
+      
+    	$body= new HTML_Template_IT();
+    	$body->loadTemplatefile("./modulos/listados.tpl");
+    	$inc=-3;
+    	$ss="";
+
+    	for ($i=0; $i<12; $i++){
+	    	$mes_sig  = mktime(0, 0, 0, date("m")+$inc+$i, date("d"),   date("Y"));
+    		if ($inc+$i!=0) {
+	    		$mes_nom = date("m-Y", $mes_sig);
+	    		$m=explode("-",$mes_nom);
+	    		$mes_nom=$mes[current($m)].'-'.end($m);
+	    	}else{
+		    	$mes_nom = "--Actual--";
+		    	$ss="selected='selected'";
+	    	}
+	    	$body->setCurrentBlock("meslista");
+	    		$body->setVariable("mesval", date("m",$mes_sig));	
+	    		$body->setVariable("mesnombre", $mes_nom);	
+	    		$body->setVariable("ss", $ss);	
+	    	$body->parseCurrentBlock("meslista");
+	    	$ss='';
+    	}
+
+    if ((isset($_POST['mes']))&&(isset($_POST['filtro']))) {
+
+    	require_once('./library/fpdf.php');
+    	$pdf = new FPDF();
+		// Títulos de las columnas
+		$header = array('Nombre', 'Nacimiento', 'Farmacia', 'Direccion', 'Localidad', 'Tel.Farmacia','Alta Sindic');
+
+		$sql="SELECT * FROM `afiliados`  LEFT OUTER JOIN `farmacias` ON `afiliados`.`id_farmacia` = `farmacias`.`id_farmacia`  WHERE (`fecha_nacimiento` LIKE '%%%%-".$_POST["mes"]."-%%' AND  `sindicato`='1') ORDER BY  `farmacias`.`razon_social` ASC ";
+		$db = ADONewConnection();
+		$result = $db->Connect("$dbhost", "$dbuname", "", "$dbname");
+		$rs=$db->Execute($sql);
+		//echo $sql;
+
+
+		$pdf->AcceptPageBreak=true;
+		$pdf->AddPage();
+		$pdf->SetAuthor("VNDesign.com.ar");
+		$pdf->SetCreator("VNDesign.com.ar");
+		$pdf->SetFont('Arial','B',15);
+		$pdf->Cell(1);
+		    // Framed title
+		$pdf->Cell(40,10,'Gestfar',1,0,'C');
+		$pdf->SetFont('Times','',10);
+		$pdf->Cell(60,10,'Afiliados por natalicio - Mes '.$mes[$_POST["mes"]],1,0,'C');
+		    // Line break
+		$pdf->Ln(20);
+		$pdf->SetFont('Arial','',8);
+		$pdf->SetRightMargin(10);
+
+		//Header
+		    $pdf->SetFillColor(80,150,230);
+		    $pdf->SetTextColor(255,255,255);
+		    $pdf->SetDrawColor(0,0,128);
+		    $pdf->SetLineWidth(.3);
+		    $pdf->SetFont('','B');
+		    // Cabecera
+		    $w = array(42, 20, 34, 38, 21, 25, 19);
+		    for($i=0;$i<count($header);$i++)
+		        $pdf->Cell($w[$i],7,$header[$i],1,0,'C',true);
+		    $pdf->Ln();
+		    
+		        
+		//Body
+		    
+		    // Restauración de colores y fuentes
+		    $pdf->SetFillColor(224,235,255);
+		    $pdf->SetTextColor(0);
+		    //$pdf->SetFont('');
+		    $pdf->SetFont('','',8);
+		    // Datos
+		    $fill = false;
+		    $i=0;
+		    //var_dump($rs);
+		    $reg=0;
+		    while (!$rs->EOF) 
+		    //foreach($rs as $row)
+		    {
+		    	$reg++;
+				$i++;
+				if( $i & 1 ) {
+					$formato='0';
+					$fill=false;
+				}else{
+					$formato='0';
+					$fill=true;
+				}
+//				$w = array(15, 55, 40, 35, 25, 25);
+		        
+		        $pdf->Cell(42,10, substr(html_entity_decode($rs->fields['nombre']),0,22),0,0,'L',$fill);  //nombre
+		        $pdf->Cell(20,10, $rs->fields['fecha_nacimiento'],0,0,'L',$fill); //dom
+		        $pdf->Cell(34,10, substr(html_entity_decode($rs->fields['razon_social']),0,19)."(".$rs->fields['id_farmacia'].")",0,0,'C',$fill); //localidad
+		        $pdf->Cell(38,10, $rs->fields['domicilio'],0,0,'C',$fill);
+		        $pdf->SetFont('','',7);
+		        $pdf->Cell(21,10, $rs->fields['localidad'],0,0,'C',$fill);  //localidad
+		        $pdf->Cell(25,10, $rs->fields['telefono'],0,0,'R',$fill); //telefono
+		        $pdf->Cell(19,10,substr( $rs->fields['sindicato_ingreso'],0,11),0,0,'C',$fill); //estado civil
+	   		    $pdf->SetFont('','',8);
+		        $pdf->Ln();
+		        $fill = !$fill;
+		        //if ($i>140) break;
+		        $rs->MoveNext();
+		    }
+		    // Línea de cierre
+		    $pdf->Cell(array_sum($w),0,'','T');
+		// Footer
+		    //$pdf->SetY(100);
+		    // Select Arial italic 8
+		    $pdf->SetFont('Arial','I',9);
+		    // Print centered page number
+		    $pdf->Ln();
+		    $fecha=date("m-d-Y");
+		    $pdf->Cell(0,10, 'Se volcaron '.$pdf->PageNo().' paginas, con un total de '.$reg.' registros. Fecha de realizacion: '.$fecha,0,0,'R');
+		    $pdf->Ln();
+		    $pdf->SetFont('Arial','I',6);
+		    $pdf->Cell(0,7,'Desarrollado por Design-sitio-web.com.ar  - VNDesign Santa Fe',0,0,'R');
+		    $pdf->Ln();
+		    $pdf->Cell(array_sum($w),0,'','T');
+
+
+		$pdf->Output();
+
+
+    }
+
+    $body->setVariable("fin","");
+	$plantilla->setVariable("contenido", $body->get()); 
+?>

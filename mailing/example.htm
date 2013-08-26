@@ -1,0 +1,110 @@
+<html>
+<head>
+<title>JS-RichEdit</title>
+<style> <!--
+BODY { margin: 10px; }
+H3 { color: #D00000; }
+BODY, P, SPAN, DIV, TABLE, TD, TH, UL, OL, LI {
+  font-family: Arial, Helvetica;
+  font-size: 14px;
+  color: black;
+}
+.code {
+  font-family: Courier New, Monospace;
+  font-size: 12px;
+  margin: 10px;
+  padding: 0px;
+  color: blue;
+}
+--> </style>
+</head>
+<body>
+<script type="text/javascript" src="richedit.js"></script>
+<h3>Introduction</h3>
+Use the EDITOR class to create WYSIWYG-editable text fields. You can create as many fields
+as you want. When put into a form, the contents can be submitted, e.g. to be stored into a
+database. Look and size can be modified easily and separately for each text field. Besides
+text-formatting, you can also insert images, bullet points, tables, and bar graphs. Other
+languages are supported, too. Have a look at these examples:
+<br/><br/>
+<form name="f1" action="javascript:alert('FIELD 1:\n' + document.f1.richEdit0.value + '\n\nFIELD 2:\n' + document.f1.richEdit1.value)" method=post>
+<script type="text/javascript"> <!--
+var editor1 = new EDITOR();
+editor1.create("This is a demonstration of the <b>richtext editor</b>.");
+
+document.write('<br/>');
+
+var editor2 = new EDITOR();
+editor2.editorBGColor = "#B0D0F0";
+editor2.editorBorder = "2px dashed blue";
+editor2.textBGColor = "#FFF0F0";
+editor2.textBorder = "2px dotted red";
+editor2.textFont = "Comic Sans MS";
+editor2.textFontSize = 14;
+editor2.create("This is a demonstration of the <b>richtext editor</b>.");
+//--> </script>
+<br/>
+<input type="submit" value="View Contents" onClick="rtoStore()">
+</form>
+<br/>
+This script was tested with the following operating systems and browsers:
+<br/><br/>
+<b>Windows XP:</b> Internet Explorer 8, Opera 9, Firefox 3
+<br/><br/>
+If you use another browser or operating system, this script may not work for you - sorry.
+<br/><br/>
+Generally, richtext editing should work on Windows with Internet Explorer 4+ and with browsers
+using the Mozilla 1.3+ engine, i.e. all browsers that support <i>designMode</i>.
+<h3>Notes</h3>
+The following browsers have been tested and do NOT support richtext editing: NN 7.0 and
+Opera 7.0 on Windows, IE 5.2 and Safari 1.0 on Mac OS. However, the script works with them,
+too - a simple textarea will replace the richtext editor.
+<br/><br/>
+If you use a DOCTYPE header in your HTML page, the look of the richtext editor might slightly
+differ. The richtext editor looks best without DOCTYPE header.
+<h3>Usage</h3>
+First include the script into your HTML body (not head!), preferably directly after the
+BODY tag:
+<pre class="code">
+&lt;script type="text/javascript" src="richedit.js"&gt;&lt;/script&gt;
+</pre>
+Then create a new instance of the EDITOR class where you want the text field to appear. This
+would usually be inside a form:
+<pre class="code">
+var editor = new EDITOR();
+</pre>
+You may wish to modify some settings:
+<pre class="code">
+editor.textHeight = 250;
+editor.setFocus = true;
+editor.fieldName = "htmlText";
+...
+</pre>
+Finally, create the text field:
+<pre class="code">
+editor.create();
+</pre>
+If you want to create a text field with preloaded content, use this syntax instead:
+<pre class="code">
+editor.create(your_content);
+</pre>
+Please note that your content may not include any CR or NL characters, or else you will get a
+JavaScript error. As already mentioned, you can create as many text fields as you want.
+<br/><br/>
+The contents of each text field can be accessed for instance with PHP after the form has been
+submitted. The text fields are named <i>richEdit0</i>, <i>richEdit1</i>, <i>richEdit2</i>, etc.
+You can change the field name <i>richEdit</i> either in the configuration section, or when
+creating a new instance of the richtext editor (see examples above). If you want to submit the
+contents of your text fields, you have to call the function <i>rtoStore()</i> first, for example
+by using a submit button like this:
+<pre class="code">
+&lt;input type="submit" value="Submit" onClick="rtoStore()"&gt;
+</pre>
+Or use a form like this:
+<pre class="code">
+&lt;form action="..." onSubmit="rtoStore()"&gt;
+</pre>
+You should also have a look at the source code of this page and the included <b>example.php</b> 
+file. ;-)
+</body>
+</html>

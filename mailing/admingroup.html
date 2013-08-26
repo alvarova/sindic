@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html><head>
+<title>Administrador de Grupos</title>
+<meta charset="UTF-8">
+<meta name="description" content="Administrador de Grupos" />
+<script type="text/javascript" src="../js/jquery.min.js"></script>
+<!--[if lt IE 9]><script src="../js/html5.js"></script><![endif]-->
+<script type="text/javascript" src="../js/prettify.js"></script>                                   <!-- PRETTIFY -->
+<script type="text/javascript" src="../js/kickstart.js"></script> 
+<script type="text/javascript" src="../js/jquery.jeditable.js"></script> 
+<link rel="stylesheet" type="text/css" href="../css/kickstart.css" media="all" /> 
+<link rel="stylesheet" type="text/css" href="../style.css" media="all" />  
+<style>
+#blagrega
+{
+	margin: 10px 10px 10px 25px;
+	display: none;
+}
+</style>
+{fin}
+</head>
+<body>
+<a id="top-of-page"></a><div id="wrap" class="clearfix">
+<div class="col_12">
+		
+		<h3>Listado de Grupos</h3> 
+		
+		
+	<a href="#" class="addgrupo" ><button class="inset small"><span class="icon" data-icon="p"></span>Agregar Grupo</button></a>
+	<div id='blagrega'>
+		<form  id='insertform' name='insertform'>
+			<label for="nombre">Grupo Nuevo (presione enter para agregar)</label>
+			<input id="nombre" type="text" placeholder="Nombre del grupo nuevo" />
+		</form>
+	</div>
+	<br/><br/>
+	<table class="striped sortable">
+		<thead><tr>
+			<th>Id Grupo</th>
+			<th>Nombre Grupo</th>
+			<th>Acciones </th>
+		</tr></thead>
+		<tbody>
+			<!-- BEGIN grupos -->
+			<tr id='{id}'>
+				<td>{id}</td>
+				<td>
+					<span id="{id}" value='{nombre}A' class="dblclick">{nombre}</span>
+				</td>
+				<td><a href="#" id='edita' class='tooltip' title='Hacer dobleclick sobre el nombre para editar. Presione Enter para guardar o ESC para cancelar.'><span class="icon gray" data-icon="7"></span></a> 
+				<a href="#" class='elimina' id='{id}'><span class="icon gray" data-icon="m"></span></a></td>
+			</tr>
+			<!-- END grupos -->
+		</tbody>			
+	</table>		
+	
+	<br/><br/>
+	<hr class="alt1 col_12" />
+	<h5>Otras acciones</h5>
+			<button class=" pop small"><span class="icon gray small" data-icon=")"></span> Exportar listado por Grupo</button>
+			<a href='#' onclick='window.close();'><button class=" pop small"><span class="icon gray small" data-icon="Q"></span> Salir  </button></a><br/><br/>	
+	</div>
+
+</div>
+<script>
+$(document).ready(function(){
+	/*
+	 * //Show-Hide bloque de agrega grupo
+	 */
+	$("a.addgrupo").click(function(e){ 
+		e.preventDefault();
+		if ($("div#blagrega").css('display') == "none")
+		 { 
+			 $("div#blagrega").css('display',"block");
+		}else{
+			$("div#blagrega").css('display',"none");
+		}
+	});
+	
+	
+	/*
+	 *  Funcion para detectar ENTER en un input y agregar elemento a la DB
+	 */
+	$('#nombre').keydown(function (e){
+		if(e.keyCode == 13){
+			e.preventDefault();
+			txt=$("#nombre").val();
+			//alert(txt);
+			 $.ajax({
+				type: "POST",
+				url: "mod_group_update.php",
+				data: "nombre="+txt+"&accion=insert",
+				success: function(datos){   
+					alert( "Los datos: " + datos); location.reload();  }
+			 });				
+			
+			//$('#insertform').trigger('submit');
+			//code
+			//location.reload();
+		}
+	});
+	
+	
+	/*
+	 * Funcion para eliminar grupos
+	 */
+	
+   $("a.elimina").click(function(){
+      //alert(this);
+       ids=$(this).attr("id");
+      pregunta='¿Desea eliminar realmente el grupo '+ids+'? (Atención: Esta acción no se puede deshacer)';
+      if (confirm(pregunta)){
+      console.log($(this).attr("id"));
+			 $.ajax({
+				type: "POST",
+				url: "mod_group_update.php",
+				data: "id="+ids+"&accion=delete",
+				success: function(datos){   
+					$(this).parent("tr:first").remove();
+					alert( "Resultado de la operacion: " + datos); location.reload(); }
+			 });	
+	  }	
+   });
+   
+   
+   /*
+    * Funcion para hacer editables con un dobleclick los elementos de la tabla
+    */
+   $(".dblclick").editable(function(value, settings) { 
+     //console.log(this);
+     console.log(value);
+     console.log(this.id);
+     //console.log(settings);
+     $.ajax({
+        type: "POST",
+        url: "mod_group_update.php",
+        data: "nombre="+value+"&id="+this.id+"&accion=update",
+        success: function(datos){
+       alert( "Se guardaron los datos: " + datos);
+      }
+});
+     return(value);
+     },
+   
+   { 
+      indicator : "<img src='../images/indicator.gif'>",
+      tooltip   : "Doubleclick para editar...",
+      event     : "dblclick",
+      style  : "inherit"
+  });
+})
+</script>
+
+</body>

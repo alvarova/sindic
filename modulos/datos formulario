@@ -1,0 +1,73 @@
+Datos personales
+Apellido y nombre
+DNI
+Nacionalidad
+Domicilio
+Localidad
+Cod Postal
+Telefono
+Email
+CUIL
+Sexo
+Estado Civil
+Fecha Nacimiento
+Fecha de Baja 
+Motivo
+
+Servicios prestados
+Sueldo Basico
+Adicional
+Adicional %
+(Fecha Ing.)Sindicato
+Cuota Sindicato %
+(Fecha Ing.)OSocial
+(Fecha Ing.)Mutual
+Cuota Mutual
+
+Situacion Laboral
+Fecha Ingreso
+Antiguedad - Año - Meses
+Efectivo / Contratado
+Jornada completa/media
+Desde el (fecha)
+Hasta el (fecha)
+Categoria
+
+Datos del empleador
+Codigo
+CUIT
+Farmacia
+Titular
+Domicilio
+Telefono
+Email
+Fax
+Localidad
+Cod Postal
+
+Familiares a Cargo
+ Beneficiarios OSocial
+Nombre
+Fecha Nacimiento
+Edad
+Parentesco
+DNI
+Sexo
+Alta
+Estado
+AltaOSocial
+AltaSindicato
+
+Beneficiario Subsidio por fallecimiento
+Apellido y nombre
+DNI
+Domicilio
+Nacionalidad
+Localidad
+CodPostal
+Fecha Nacimiento
+Telefono
+Parentezco
+FirmoFormulario
+
+

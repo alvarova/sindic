@@ -1,0 +1,431 @@
+<?php
+
+/*Listar afiliados agrupados por edad, da la cantidad de afiliados con 30 añós, 40 años etc.. ideal estadisticas:
+SELECT (
+YEAR( CURDATE( ) ) - YEAR( fecha_nacimiento )
+) - ( RIGHT( CURDATE( ) , 5 ) < RIGHT( fecha_nacimiento, 5 ) ) AS edad, COUNT( * ) AS cantidad
+FROM afiliados
+GROUP BY edad
+ORDER BY  `edad` ASC 
+LIMIT 0 , 30
+
+
+Filtro afiliados por rango de edad
+SELECT *  FROM afiliados 
+WHERE ( ( YEAR( CURDATE( ) ) - YEAR( fecha_nacimiento ) ) - ( RIGHT( CURDATE( ) , 5 ) < RIGHT( fecha_nacimiento, 5 ) ) BETWEEN 30  AND 40 )
+*/
+
+	require_once("./library/PEAR.php");
+	require_once("./library/IT.php");
+
+	$mes['01']='Enero';$mes['02']='Febrero';$mes['03']='Marzo';$mes['04']='Abril';$mes['05']='Mayo';$mes['06']='Junio';
+	$mes['07']='Julio';$mes['08']='Agosto';$mes['09']='Septiembre';$mes['10']='Octubre';$mes['11']='Noviembre';$mes['12']='Diciembre';
+	//error_reporting(0);
+    $parentesco="";
+    $ocultalista=true;  
+    	$body= new HTML_Template_IT();
+    	$body->loadTemplatefile("./modulos/listados.tpl");
+    	$inc=-3;
+    	$ss="";
+
+    	for ($i=0; $i<12; $i++){
+	    	$mes_sig  = mktime(0, 0, 0, date("m")+$inc+$i, date("d"),   date("Y"));
+    		if ($inc+$i!=0) {
+	    		$mes_nom = date("m-Y", $mes_sig);
+	    		$m=explode("-",$mes_nom);
+	    		$mes_nom=$mes[current($m)].'-'.end($m);
+	    	}else{
+		    	$mes_nom = "--Actual--";
+		    	$ss="selected='selected'";
+	    	}
+	    	$body->setCurrentBlock("meslista");
+	    		$body->setVariable("mesval", date("m",$mes_sig));	
+	    		$body->setVariable("mesnombre", $mes_nom);	
+	    		$body->setVariable("ss", $ss);	
+	    	$body->parseCurrentBlock("meslista");
+	    	$ss='';
+    	}
+
+    /*
+     * Comenzar con la detección del GENERADOR
+     * postea FILTRO y MES  vuelco planilla con los cumple de los afiliados
+     * postea FILTRO y TIPO afiliado generamos listado segun filtro de categorias
+     */
+    if ((isset($_POST['mes']))&&($_POST['filtro']=='0')) {
+
+    	require_once('./library/fpdf.php');
+    	$pdf = new FPDF();
+		// Títulos de las columnas
+		$header = array('Nombre', 'Nacimiento', 'Farmacia', 'Direccion', 'Localidad', 'Tel.Farmacia','Alta Sindic');
+
+		$sql="SELECT * FROM `afiliados`  LEFT OUTER JOIN `farmacias` ON `afiliados`.`id_farmacia` = `farmacias`.`id_farmacia`  WHERE (`fecha_nacimiento` LIKE '%%%%-".$_POST["mes"]."-%%' AND `sindicato`='1' ) ".$vertodos." ORDER BY  `farmacias`.`razon_social` ASC ";
+		$db = ADONewConnection();
+		$result = $db->Connect("$dbhost", "$dbuname", "", "$dbname");
+		$rs=$db->Execute($sql);
+		//echo $sql;
+
+
+		$pdf->AcceptPageBreak=true;
+		$pdf->AddPage();
+		$pdf->SetAuthor("VNDesign.com.ar");
+		$pdf->SetCreator("VNDesign.com.ar");
+		$pdf->SetFont('Arial','B',15);
+		$pdf->Cell(1);
+		    // Framed title
+		$pdf->Cell(40,10,'Gestfar',1,0,'C');
+		$pdf->SetFont('Times','',10);
+		$pdf->Cell(60,10,'Afiliados por natalicio - Mes '.$mes[$_POST["mes"]],1,0,'C');
+		    // Line break
+		$pdf->Ln(20);
+		$pdf->SetFont('Arial','',8);
+		$pdf->SetRightMargin(10);
+
+		//Header
+		    $pdf->SetFillColor(80,150,230);
+		    $pdf->SetTextColor(255,255,255);
+		    $pdf->SetDrawColor(0,0,128);
+		    $pdf->SetLineWidth(.3);
+		    $pdf->SetFont('','B');
+		    // Cabecera
+		    $w = array(42, 20, 34, 38, 21, 25, 19);
+		    for($i=0;$i<count($header);$i++)
+		        $pdf->Cell($w[$i],7,$header[$i],1,0,'C',true);
+		    $pdf->Ln();
+		    
+		        
+		//Body
+		    
+		    // Restauración de colores y fuentes
+		    $pdf->SetFillColor(224,235,255);
+		    $pdf->SetTextColor(0);
+		    //$pdf->SetFont('');
+		    $pdf->SetFont('','',8);
+		    // Datos
+		    $fill = false;
+		    $i=0;
+		    //var_dump($rs);
+		    $reg=0;
+		    while (!$rs->EOF) 
+		    //foreach($rs as $row)
+		    {
+		    	$reg++;
+				$i++;
+				if( $i & 1 ) {
+					$formato='0';
+					$fill=false;
+				}else{
+					$formato='0';
+					$fill=true;
+				}
+//				$w = array(15, 55, 40, 35, 25, 25);
+		        
+		        $pdf->Cell(42,10, substr(html_entity_decode($rs->fields['nombre']),0,22),0,0,'L',$fill);  //nombre
+		        $pdf->Cell(20,10, $rs->fields['fecha_nacimiento'],0,0,'L',$fill); //dom
+		        $pdf->Cell(34,10, substr(html_entity_decode($rs->fields['razon_social']),0,19)."(".$rs->fields['id_farmacia'].")",0,0,'C',$fill); //localidad
+		        $pdf->Cell(38,10, $rs->fields['domicilio'],0,0,'C',$fill);
+		        $pdf->SetFont('','',7);
+		        $pdf->Cell(21,10, $rs->fields['localidad'],0,0,'C',$fill);  //localidad
+		        $pdf->Cell(25,10, $rs->fields['telefono'],0,0,'R',$fill); //telefono
+		        $pdf->Cell(19,10,substr( $rs->fields['sindicato_ingreso'],0,11),0,0,'C',$fill); //estado civil
+	   		    $pdf->SetFont('','',8);
+		        $pdf->Ln();
+		        $fill = !$fill;
+		        //if ($i>140) break;
+		        $rs->MoveNext();
+		    }
+		    // Línea de cierre
+		    $pdf->Cell(array_sum($w),0,'','T');
+		// Footer
+		    //$pdf->SetY(100);
+		    // Select Arial italic 8
+		    $pdf->SetFont('Arial','I',9);
+		    // Print centered page number
+		    $pdf->Ln();
+		    $fecha=date("m-d-Y");
+		    $pdf->Cell(0,10, 'Se volcaron '.$pdf->PageNo().' paginas, con un total de '.$reg.' registros. Fecha de realizacion: '.$fecha,0,0,'R');
+		    $pdf->Ln();
+		    $pdf->SetFont('Arial','I',6);
+		    $pdf->Cell(0,7,'Desarrollado por Design-sitio-web.com.ar  - VNDesign Santa Fe',0,0,'R');
+		    $pdf->Ln();
+		    $pdf->Cell(array_sum($w),0,'','T');
+
+		$pdf->Output();
+
+
+    } else if ((isset($_POST['tipo']))&&(isset($_POST['filtro']))) {
+    	
+    	if ($_POST['tipo']!=1) {$vertodos="";} else { $vertodos=" AND (`afiliados`.fecha_baja =  '0000-00-00') ";}
+
+    	if ($_POST['filtro']<12){
+		// Títulos de las columnas
+		$header = array('Nombre', 'Nacimiento', 'Farmacia', 'Direccion', 'Localidad', 'Tel.Farmacia','Alta Sindic');
+
+		$sql ="select * from categorias";		
+		$db = ADONewConnection();
+		$result = $db->Connect("$dbhost", "$dbuname", "", "$dbname");
+		$rs=$db->Execute($sql);
+		while (!$rs->EOF) {
+    			$categoria[$rs->fields['id_categoria']] = $rs->fields['descripcion'];
+    			$rs->MoveNext();
+    		}
+
+    	$afiltro="";
+    	$filtroaf="";
+    	if (isset($_POST['afiliacion'])) { $afiliacion = $_POST['afiliacion'];} else {$afiliacion = 0;}
+    	if ($afiliacion==1) { $afiltro=' AND (`afiliados`.sindicato = 1) '; $filtroaf=' Afiliados';  }
+    	else if ($afiliacion==2) { $afiltro=' AND (`afiliados`.sindicato = 0) '; $filtroaf=' NO Afiliados'; }
+
+		$sql="SELECT DISTINCT (`afiliados`.nro_documento),  `afiliados`.id_farmacia,  `afiliados`.nombre,  `farmacias`.razon_social,  `afiliados`.localidad,  `afiliados`.telefono, `farmacias`.telefono, `afiliados`.`id_afiliado`  FROM  `afiliados` LEFT OUTER JOIN  `farmacias` ON  `afiliados`.`id_farmacia` =  `farmacias`.`id_farmacia` WHERE (id_categoria =  '".$_POST['filtro']."'".$vertodos.$afiltro." ) ORDER BY  `afiliados`.`localidad` ASC,`farmacias`.`razon_social`,`afiliados`.`nombre` ASC ";
+		$rs=$db->Execute($sql);
+		
+		//SELECT distinct (nro_documento), nombre FROM `afiliados` WHERE (id_categoria = '7' and fecha_baja = '0000-00-00') order by id_afiliado desc
+    	//**SELECT DISTINCT (`afiliados`.nro_documento),  `afiliados`.id_farmacia,  `afiliados`.nombre,  `farmacias`.razon_social FROM  `afiliados` LEFT OUTER JOIN  `farmacias` ON  `afiliados`.`id_farmacia` =  `farmacias`.`id_farmacia` WHERE (id_categoria =  '10' AND (fecha_baja =  '0000-00-00')) ORDER BY  `afiliados`.`id_farmacia` DESC 
+    	if (isset($_POST['pdf'])) {
+    		require_once('./library/fpdf.php');
+    		$pdf = new FPDF();
+    		
+    		$header = array('DNI', 'Nombre', 'Farmacia', 'Localidad', 'Telefono', 'Tel.Farmacia');
+
+			$pdf->AcceptPageBreak=true;
+			$pdf->AddPage();
+			$pdf->SetAuthor("VNDesign.com.ar");
+			$pdf->SetCreator("VNDesign.com.ar");
+			$pdf->SetFont('Arial','B',15);
+			$pdf->Cell(1);
+			    // Framed title
+			$pdf->Cell(40,10,'Gestfar',1,0,'C');
+			$pdf->SetFont('Times','',10);
+			$pdf->Cell(110,10, "Volcado de Afiliados para CATEGORIA ".$categoria[$_POST['filtro']].$filtroaf,1,0,'C');
+			    // Line break
+			$pdf->Ln(20);
+			$pdf->SetFont('Arial','',8);
+			$pdf->SetRightMargin(10);
+
+			//Header
+			    $pdf->SetFillColor(80,150,230);
+			    $pdf->SetTextColor(255,255,255);
+			    $pdf->SetDrawColor(0,0,128);
+			    $pdf->SetLineWidth(.3);
+			    $pdf->SetFont('','B');
+			    // Cabecera
+			    $w = array(15, 40, 40, 28, 25, 25);
+			    for($i=0;$i<count($header);$i++)
+			        $pdf->Cell($w[$i],7,$header[$i],1,0,'C',true);
+			    $pdf->Ln();
+			    
+			        
+			//Body
+			    
+			    // Restauración de colores y fuentes
+			    $pdf->SetFillColor(224,235,255);
+			    $pdf->SetTextColor(0);
+			    //$pdf->SetFont('');
+			    $pdf->SetFont('','',8);
+			    // Datos
+			    $fill = false;
+			    $i=0;
+			    //var_dump($rs);
+			    $reg=0;
+			    while (!$rs->EOF) 
+			    //foreach($rs as $row)
+			    {
+			    	$reg++;
+					$i++;
+					if( $i & 1 ) {
+						$formato='0';
+						$fill=false;
+					}else{
+						$formato='0';
+						$fill=true;
+					}
+	//				$w = array(15, 55, 40, 35, 25, 25);
+
+
+			        $pdf->Cell(15,10, substr(html_entity_decode($rs->fields['nro_documento']),0,22),0,0,'L',$fill);  //nombre
+			        $pdf->Cell(40,10, substr(html_entity_decode($rs->fields['nombre']),0,22),0,0,'L',$fill); //dom
+			        $pdf->Cell(40,10, substr(html_entity_decode($rs->fields['razon_social']),0,19),0,0,'R',$fill); //localidad
+			        $pdf->Cell(28,10, substr(html_entity_decode($rs->fields['localidad']),0,14),0,0,'R',$fill);
+			        $pdf->Cell(25,10, (html_entity_decode($rs->fields['5'])),0,0,'R',$fill);  //localidad
+			        $pdf->Cell(25,10, (html_entity_decode($rs->fields['6'])),0,0,'R',$fill);  //localidad
+			        $pdf->Ln();
+			        $fill = !$fill;
+			        //if ($i>140) break;
+			        $rs->MoveNext();
+			    }
+			    // Línea de cierre
+			    $pdf->Cell(array_sum($w),0,'','T');
+			// Footer
+			    //$pdf->SetY(100);
+			    // Select Arial italic 8
+			    $pdf->SetFont('Arial','I',9);
+			    // Print centered page number
+			    $pdf->Ln();
+			    $fecha=date("m-d-Y");
+			    $pdf->Cell(0,10, 'Se volcaron '.$pdf->PageNo().' paginas, con un total de '.$reg.' registros. Fecha de realizacion: '.$fecha,0,0,'R');
+			    $pdf->Ln();
+			    $pdf->SetFont('Arial','I',6);
+			    $pdf->Cell(0,7,'Desarrollado por Design-sitio-web.com.ar  - VNDesign Santa Fe',0,0,'R');
+			    $pdf->Ln();
+			    $pdf->Cell(array_sum($w),0,'','T');
+
+			$pdf->Output();
+
+
+    	}else{
+    		$cantidadafiliados=0;
+    		$body->setVariable("titulo",  "Volcado de personal para CATEGORIA ".$categoria[$_POST['filtro']].$filtroaf);
+    		while (!$rs->EOF) {
+    			$body->setCurrentBlock("listado");
+		    		$body->setVariable("nro_documento", $rs->fields['nro_documento']);	
+		    		if ($rs->fields['nro_documento']=="") {
+		    			$sdni_abre="<a href='#' class='veraf_sindni' id='".$rs->fields['id_afiliado']."'>";
+		    			$sdni_cierra="</a>";
+		    		}else { $sdni_cierra=""; $sdni_abre="";}
+		    		$body->setVariable("nombre", $sdni_abre.$rs->fields['nombre'].$sdni_cierra);	
+		    		$body->setVariable("razon_social", $rs->fields['razon_social']);
+		    		$body->setVariable("localidad", $rs->fields['localidad']);
+		    		$body->setVariable("telefono", $rs->fields['5']);
+		    		$body->setVariable("telfarmacia", $rs->fields['6']);
+		    		$body->setVariable("tooltip", $rs->fields['telefono']);
+		    		//var_dump($rs);
+	    		$body->parseCurrentBlock("listado");
+	    		$cantidadafiliados++;
+    			$rs->MoveNext();
+    			$ocultalista=false;
+    		}
+			$body->setVariable("totallista", $cantidadafiliados);    		
+			$body->setVariable("encabezado-tabla", "<th>DNI</th><th>Nombre</th><th>Farmacia</th><th>Localidad</th><th>Telefono</th><th>Tel.Farmacia</th>");    		
+    	}
+     }else{  //es mayor a 12, por lo tanto es otro listado fuera de las categorias
+     	//Momentaneamente solo para fliares. agregar condicion para determinar el tipo de lista
+     	$where=false;
+     	include_once("./library/mod_qfunciones.php");
+     	/* 
+     	 * Filtro FAMILIARES
+     	 * Falta unificar procedimiento, para no repetir código.
+     	*/
+     	//Seteo de los filtros
+     	// FILTRO AFILIADOS por FILIACION
+     	if (isset($_POST['afiliacion'])) {
+			switch ($_POST['afiliacion']) {
+			    case '1':
+			    	$where=true;
+			        $af_afiliacion=" `afiliados`.`sindicato`='1' "; //Son afiliados
+			        $w[]=$af_afiliacion;
+			        break;
+			    case '2':
+			    	$where=true;
+			        $af_afiliacion=" `afiliados`.`sindicato`='0' "; //No lo son
+			        $w[]=$af_afiliacion;
+			        break;
+			    default:
+			       $af_afiliacion="";
+			}
+			
+     	}
+     	// FILTRO FLIARES POR SEXO
+     	if (isset($_POST['sexo'])) {
+			switch ($_POST['sexo']) {
+			    case '1':
+			    	$where=true;
+			        $fam_sexo=" `familiares`.`sexo`='M' "; //Son afiliados
+					$w[]=$fam_sexo;
+			        break;
+			    case '2':
+			    	$where=true;
+			        $fam_sexo=" `familiares`.`sexo`='F' "; //No lo son
+        			$w[]=$fam_sexo;
+			        break;
+			    default:
+			       $fam_sexo="";
+			}
+
+     	}
+
+     	
+
+     	//FILTRO POR RANGO DE EDAD
+     	if (isset($_POST['edad1']) && isset($_POST['edad2'])) {
+     		$where=true;
+     		if ($_POST['edad1']>$_POST['edad2']) {
+     			$edad_ini=$_POST['edad2'];
+     			$edad_fin=$_POST['edad1'];
+
+     		}else {
+     			$edad_ini=$_POST['edad1'];
+     			$edad_fin=$_POST['edad2'];
+     		
+     		}
+     		$fam_edad="( ( YEAR( CURDATE( ) ) - YEAR( `familiares`.fecha_nacimiento ) ) - ( RIGHT( CURDATE( ) , 5 ) < RIGHT( `familiares`.fecha_nacimiento, 5 ) ) >= ".$edad_ini." ) AND ( ( YEAR( CURDATE( ) ) - YEAR( `familiares`.fecha_nacimiento ) ) - ( RIGHT( CURDATE( ) , 5 ) < RIGHT( `familiares`.fecha_nacimiento, 5 ) ) <= ".$edad_fin." ) ";
+     	$w[]=$fam_edad;
+     	}
+
+     	if ($where) { 
+     		$where=" WHERE  ".implode(" AND ", $w);
+     		//' WHERE '.$af_afiliacion." AND ".$fam_sexo." AND ".$fam_edad;
+     	}
+
+		$db = ADONewConnection();
+		$result = $db->Connect("$dbhost", "$dbuname", "", "$dbname");
+
+
+     	$sql='select * from parientes';
+		$rs=$db->Execute($sql);	
+		//Arreglo con los ID que tiene  asignado el usr
+		if ($rs === false) die("Fallo consultando parentescos.".$sql);
+		$c=0;
+		while (!$rs->EOF) {	
+				$parentesco[$rs->fields['id_parentesco']]=$rs->fields['parentesco'];		
+				$rs->MoveNext();
+				$c++;
+		}
+
+
+     	$cantidadafiliados=0;
+     	//DATE(fecha) >= SUBDATE( CURDATE( ) , INTERVAL 90 DAY )
+$consulta = "SELECT `familiares`.id_familiar, `familiares`.id_afiliado,`familiares`.id_parentesco, `familiares`.nro_documento, `familiares`.nombre,`afiliados`.localidad, `afiliados`.telefono, `familiares`.fecha_nacimiento, `familiares`.sexo     FROM  familiares    LEFT JOIN parientes		ON familiares.id_parentesco=parientes.id_parentesco	LEFT JOIN afiliados ON familiares.id_afiliado=afiliados.id_afiliado ".$where.$vertodos." ORDER BY `familiares`.fecha_nacimiento ";
+
+		$rs=$db->Execute($consulta);
+		//var_dump($perentesco);
+		//var_dump($rs);
+		//var_dump($consulta);
+		while (!$rs->EOF) {
+			$body->setCurrentBlock("listado_fam");
+		    		$body->setVariable("nro_documento_af", $rs->fields['3']);	
+		    		
+		    			$sdni_abre="<a href='#' class='veraf_sindni' id='".$rs->fields['1']."'>";
+		    			$sdni_cierra="</a>";
+		    		
+		    		
+		    		$body->setVariable("nombre", $sdni_abre.$rs->fields['4'].$sdni_cierra);	
+		    		
+		    		$idp=$parentesco[$rs->fields['id_parentesco']];
+		    		
+		    		//var_dump($idp);
+		    		$body->setVariable("parentesco", antiguedad($rs->fields['7']));
+		    		
+		    		$body->setVariable("localidad", $rs->fields['5']);
+		    		$body->setVariable("telefono", $rs->fields['6']);
+		    		$body->setVariable("fecha_nacimiento", $rs->fields['7']);
+		    		$body->setVariable("sexo", $rs->fields['8']);
+		    		$body->setVariable("tooltip", '5');
+		    		//var_dump($rs);
+	    		$body->parseCurrentBlock("listado_fam");
+	    		$cantidadafiliados++;
+    			$rs->MoveNext();
+    			$ocultalista=false;
+    		}
+			$body->setVariable("totallista", "familiares de afiliados listados ".$cantidadafiliados);
+			$body->setVariable("encabezado-tabla", "<th>DNI</th><th>Nombre</th><th>Edad</th><th>Localidad</th><th>Telefono</th><th>Fecha Nacimiento</th><th>Sexo</th>");
+
+     } //Cierra ELSE general
+
+
+
+	}
+    if ($ocultalista) {
+    	$body->setVariable("listado","$('#listado').hide();"); 
+    }
+    $body->setVariable("fin","");
+	$plantilla->setVariable("contenido", $body->get()); 
+?>
