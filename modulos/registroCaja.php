@@ -1,11 +1,11 @@
 <?php
     //Caja es la clase, define todos procedimientos
-    include_once("./modulos/Caja.php");
+    include_once("./modulos/AdministraCaja.php");
 
 	$body= new HTML_Template_IT();
 	$body->loadTemplatefile("./modulos/registroCaja.tpl");
 	//instanciamos la clase AdministrarCaja
-	$gestionar = new AdministraCaja();
+	$gestionar = new Caja();
 
 	//-- Gestionar formulario para ingreso de gastos o depositos
 		//Separador
@@ -40,9 +40,11 @@
 		$gestionar->ingreso($monto, $codigo, $detalle, $fecha);
     		
     }
-    //$gestionar->ingreso(1000);
-    //$gestionar->egreso(250);
-    $gestionar->volcarSaldo();
+    
+
+    $gestionar->movimiento(1000, '20130703', '999', 'Retiro e Ingreso para caja diara', '');
+    
+    //$gestionar->volcarSaldo();
 
 
 	$body->setVariable("totallista", "0");
