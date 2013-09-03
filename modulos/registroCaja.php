@@ -40,6 +40,7 @@
 		$fc=$_POST['fechaconsulta'];
 		$fechaMov=str_replace('-', "", $fc);
 	} else {
+		$fc=date("Y-m");
 		$fechaMov=date("Ym");
 	}
 
@@ -83,6 +84,7 @@
 		$body->parseCurrentBlock("listado");
 		//Parsear ultimo comprobante para el ingreso de recibos.
 		$body->setVariable("comprobantesiguiente", $gestionar->ultimoComprobante($fechaMov)+1);
+		$body->setVariable("rango", $fc);
 
 	$body->setVariable("totallista", "0");
 

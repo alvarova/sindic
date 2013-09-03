@@ -35,7 +35,11 @@
 		<h6>Elementos correspondientes a la fecha {rango} <span id='cant_selected'></span></h6>
 		<div class='col_4'></div>
 		<div class="col_8"> 
-			Buscar registros (A&ntilde;o-Mes - ej. 2013-08) <input type='text' size='10' value='{fechaconsulta}' name='fechaconsulta' id='fechaconsulta'/>  <a class="button square small" id='m50' href="">Consultar</a>
+			Buscar registros (A&ntilde;o-Mes - ej. 2013-08)
+			<label for="fecha" >Fecha:</label>	<input type="text" value='{fechaconsulta}' name='fechaconsulta' id='fechaconsulta' />
+
+			<button type="submit" class="small green right" id='envia'>Consultar</button>
+			 
 		</div>
 	</form>
 	<!-- Table combined Styles -->
@@ -132,6 +136,9 @@ hoy=today;
 
 	$( "#datepicker" ).datepicker({ 			inline: true 		});
 	$( "#datepicker" ).datepicker("option", "dateFormat","yy-mm-dd");
+	
+	$( "#fechaconsulta" ).datepicker({ 			inline: true 		});
+	$( "#fechaconsulta" ).datepicker("option", "dateFormat","yy-mm");	
 
 	$("#enviar").click(function() {
 		fecha=$("#datepicker").val();
