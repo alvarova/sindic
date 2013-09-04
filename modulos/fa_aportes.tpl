@@ -1,18 +1,16 @@
 <!--{fin}-->
 	<div class="col_12" id="listado">
-	<h5>Movimientos de caja</h5>
+	<h5>Registro de Aportes</h5>
 	</div>
 	<div class="col_12" id="registrar">
-	<h6>Registrar movimientos<span id='cant_selected'></span></h6>
 		
-	<form name='movimiento' action="./index.php?ac=registrocaja" method="post">
-		<label for="codigo" >C&oacute;digo</label>
-		<select id="codigo" name='codigo' class="tooltip" title="Tipee el codigo para el movimiento a registrar">
+	<form name='movimiento' action="./index.php?ac=fa_aportes" method="post">
+		<label for="idfarmacia" >Farmacia</label>
+		<select id="idfarmacia" name='idfarmacia' class="tooltip" title="Tipee el nombre de la farmacia" onchange="this.form.submit()">
+			<option value="" {noselected}> -- Seleccione Farmacia -- </option>
 			<!-- BEGIN listacodigos -->
-			<option value="{codigo}">{concepto}</option>
+			<option value="{codigo}" {selected}>{concepto}</option>
 			<!-- END listacodigos -->
-			<option value="0" >&nbsp;&nbsp;&nbsp;&nbsp;-- De Ingresos --</option>			
-			<option value="999">999 - Ingreso</option>	
 		</select>
 		<label for="fecha" >Fecha:</label>
 		<input name="fecha" type="text" id="datepicker" />
@@ -32,7 +30,7 @@
 
 	<div class="col_12" id="listado">
 	<form name='busca' action="./index.php?ac=registrocaja" method="post">
-		<h6>Elementos correspondientes a la fecha {rango} <span id='cant_selected'></span></h6>
+		<h6>Afiliados a la fecha {rango} <span id='cant_selected'></span></h6>
 		<div class='col_4'></div>
 		<div class="col_8" id='buscaregistros'> 
 			Buscar registros (A&ntilde;o-Mes - ej. 2013-08)
@@ -46,17 +44,13 @@
 	<table class=" tight sortable" cellspacing="0" cellpadding="0">
 	<thead>
 		<tr>
-			<th>Fecha</th>
-			<th>N&ordm;</th>
-			<th>Codigo</th>
-			<th>Gastos Admin.</th>
-			<th>Importe</th>
-			<th>N&ordm;</th>
-			<th>Codigo</th>
-			<th>Gastos Sector</th>
-			<th>Importe</th>			
-			<th>Saldo</th>
-			
+			<th>DNI</th>
+			<th>Nombre</th>
+			<th>Ingreso</th>
+			<th>Categoria</th>
+			<th>Antig.+Adicional</th>
+			<th>Sindical</th>
+			<th>Art 47 C.C.T.</th>
 		</tr>
 	</thead>
 	<tbody>
@@ -65,34 +59,25 @@
 	
 	<tr class='tafiliado {tipoafiliado} {fondo_celda}'>
 	<td>
-		{fecha}
+		{dni}
 	</td>
 	<td>
-		{nroi}
+		{nombre}
 	</td>		
 	<td >
-		{codigoi}
+		{fecha_ingreso}
 	</td>
-	<td>
-		{conceptoi}
-	</td>
-	<td class='right'>
-		{importei}
-	</td>
-	<td>
-		{nrod}
-	</td>
-	<td>
-		{codigod}
-	</td>
-	<td>
-		{conceptod}
+	<td class='center'>
+		{categoria}
 	</td>
 	<td class='right'>
-		{imported}
+		{antiguedad}
 	</td>
 	<td class='right'>
-		{saldo}
+		{sindical}
+	</td>
+	<td class='right'>
+		{art47}
 	</td>	
 	</tr>
 	<!-- END listado -->

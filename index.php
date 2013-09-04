@@ -130,13 +130,13 @@ if (isset($_POST["enviado"])) 	$enviado=$_POST["enviado"];
          }
 	 elseif ($ac=="registrocaja")  {
 	 		$plantilla->setVariable("setOnHeader",' <link href="css/cupertino/jquery-ui-1.10.3.custom.css" rel="stylesheet"> 	<script src="js/jquery-1.9.1.js"></script> 	<script src="js/jquery-ui-1.10.3.custom.js"></script>');
-
-
-
-
-
             include_once("./modulos/registroCaja.php");
             $actual='m6';
+         }
+	 elseif ($ac=="fa_aportes")  {
+	 		$plantilla->setVariable("setOnHeader",' <link href="css/cupertino/jquery-ui-1.10.3.custom.css" rel="stylesheet"> 	<script src="js/jquery-1.9.1.js"></script> 	<script src="js/jquery-ui-1.10.3.custom.js"></script>');
+            include_once("./modulos/fa_aportes.php");
+            $actual='m3';
          }
 	 elseif ($ac=="volcadocaja")  {
 	 		//$plantilla->setVariable("setOnHeader",'<script type="text/javascript" src="js/jquery.autocomplete.js"></script>');
