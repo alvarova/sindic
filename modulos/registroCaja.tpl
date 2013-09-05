@@ -1,9 +1,9 @@
 <!--{fin}-->
 	<div class="col_12" id="listado">
-	<h5>Movimiento de caja</h5>
+	<h5>Movimientos de caja</h5>
 	</div>
 	<div class="col_12" id="registrar">
-	<h6>Registrar movimiento<span id='cant_selected'></span></h6>
+	<h6>Registrar movimientos<span id='cant_selected'></span></h6>
 		
 	<form name='movimiento' action="./index.php?ac=registrocaja" method="post">
 		<label for="codigo" >C&oacute;digo</label>
@@ -11,15 +11,15 @@
 			<!-- BEGIN listacodigos -->
 			<option value="{codigo}">{concepto}</option>
 			<!-- END listacodigos -->
-			<option value="0">-- Ingreso Caja --</option>			
-			<option value="999">Ingreso</option>	
+			<option value="0" >&nbsp;&nbsp;&nbsp;&nbsp;-- De Ingresos --</option>			
+			<option value="999">999 - Ingreso</option>	
 		</select>
 		<label for="fecha" >Fecha:</label>
 		<input name="fecha" type="text" id="datepicker" />
 		
 		<br/><br/>
 		<label for="comprobante">N&ordm;</label>
-		<input name="comprobante" placeholder="102" type="text" size='3' class="tooltip" title="Ingrese el numero de orden asignad para el comprobante.">
+		<input name="comprobante" placeholder="{comprobantesiguiente}" type="text" size='3' class="tooltip" title="Ingrese el numero de orden asignad para el comprobante.">
 		<label for="concepto">Concepto</label>
 		<input name="concepto" placeholder="Detalle " type="text" class="tooltip" title="Describa brevemente el concepto.">
 		<label for="importe">Importe</label>
@@ -31,93 +31,91 @@
 	</div>
 
 	<div class="col_12" id="listado">
-	
-	<h6>Elementos correspondientes a la fecha {rango} <span id='cant_selected'></span></h6>
-	<div class='col_4'></div>
-	<div class="col_8"> 
-		Buscar registros (Mes/A&ntilde;o) <input type='text' size='10' value='1' id='idInicio'/>  <a class="button square small" id='m50' href="">Consultar</a>
-	</div>
+	<form name='busca' action="./index.php?ac=registrocaja" method="post">
+		<h6>Elementos correspondientes a la fecha {rango} <span id='cant_selected'></span></h6>
+		<div class='col_4'></div>
+		<div class="col_8" id='buscaregistros'> 
+			Buscar registros (A&ntilde;o-Mes - ej. 2013-08)
+			<label for="fecha" >Fecha:</label>	<input type="text" value='{fechaconsulta}' name='fechaconsulta' id='fechaconsulta' />
+
+			<button type="submit" class="small green right" id='envia'>Consultar</button>
+			 
+		</div>
+	</form>
 	<!-- Table combined Styles -->
-	<table class="striped tight sortable" cellspacing="0" cellpadding="0">
+	<table class=" tight sortable" cellspacing="0" cellpadding="0">
 	<thead>
 		<tr>
 			<th>Fecha</th>
 			<th>N&ordm;</th>
 			<th>Codigo</th>
-			<th>Concepto</th>
+			<th>Gastos Admin.</th>
 			<th>Importe</th>
 			<th>N&ordm;</th>
 			<th>Codigo</th>
-			<th>Concepto</th>
+			<th>Gastos Sector</th>
 			<th>Importe</th>			
 			<th>Saldo</th>
 			
 		</tr>
 	</thead>
 	<tbody>
+	
 	<!-- BEGIN listado -->
 	
-	<tr class='tafiliado {tipoafiliado}'>
+	<tr class='tafiliado {tipoafiliado} {fondo_celda}'>
 	<td>
-		<span class='todos'>{nro}</span><span class='solo{tipoafiliado}'>{nrotipoafiliado}</span> | <a href='#' class='{nro}' id='{id_afiliado}'>{id_afiliado}</a>
-	</td>	
-	<td class="tooltip-bottom" title="Tildar, si desea generar un listado en formato PDF.">
-		{nombre}
+		{fecha}
 	</td>
 	<td>
-		{razon_social}
+		{nroi}
+	</td>		
+	<td >
+		{codigoi}
 	</td>
 	<td>
-		{localidad}
+		{conceptoi}
+	</td>
+	<td class='right'>
+		{importei}
 	</td>
 	<td>
-		{fechaalta}
+		{nrod}
 	</td>
 	<td>
-		<input type="checkbox" class='chk' id="chk{id_afiliado}" name='chk{nro}' value='{id_afiliado}'/>{opciones}
+		{codigod}
 	</td>
 	<td>
-		{fechaalta}
+		{conceptod}
 	</td>
-	<td>
-		{fechaalta}
+	<td class='right'>
+		{imported}
 	</td>
-	<td>
-		{fechaalta}
+	<td class='right'>
+		{saldo}
 	</td>	
 	</tr>
 	<!-- END listado -->
 
 	</table>
-	<h6>Total de {totallista}</h6>
+
 	</div>
 	<div class="col_3">
 
+	<div id='imprime'>
+		<a class="button pop" id='imprimir' href=""><span class="icon" data-icon="P"></span>Imprime</a>
+	</div>
 
-	<h6>Nuestro Soporte</h6>
-	
-	<span class="icon social x-large darkgray" data-icon="G"></span>
-	<span class="icon social x-large" style="color:orange;" data-icon="5"></span>
-	<span class="icon social x-large green" data-icon="3"></span>	
-	<span class="icon social x-large blue" data-icon="2"></span>
-	<span class="icon social x-large gray" data-icon="S"></span>
-	<span class="icon social x-large blue" data-icon="E"></span>
-	
-	
-	<h6>Acceda a nuestro RSS</h6>
-	<a class="button orange small" href="#"><span class="icon social" data-icon="r"></span> RSS</a>
 	</div>
 		<form id='verafiliado' action='./index.php?ac=afiliados' target='_blank' method='post' >
 			<input type='hidden' id='campo' name='campo' value='nro_documento' /><input id='criteriodni' type='hidden' name='criterio' value='' />
 		</form>
-	<hr />
-	<div class='fixed-div'></div>
 
 <script>
 
 $(document).ready(function() {
 
-
+$("#verafiliado").hide();
 // ***********************ELEMENTOS VALIDOS PARA EL FORMULARIO, PURGAR LO ANTERIOR *********************
 var today = new Date();
 var dd = today.getDate();
@@ -136,8 +134,13 @@ hoy=today;
       }
     });
 
+
+
 	$( "#datepicker" ).datepicker({ 			inline: true 		});
 	$( "#datepicker" ).datepicker("option", "dateFormat","yy-mm-dd");
+	
+	$( "#fechaconsulta" ).datepicker({ 			inline: true 		});
+	$( "#fechaconsulta" ).datepicker("option", "dateFormat","yy-mm");	
 
 	$("#enviar").click(function() {
 		fecha=$("#datepicker").val();
@@ -161,6 +164,18 @@ hoy=today;
 			}
 		}
 	});
+
+    $("#imprimir").click(function() {
+    	event.preventDefault();
+    	$("#registrar").hide();$("#imprime").hide();$("#top-of-page").hide();
+    	$("#buscaregistros").hide();
+    	$(".menu").hide();
+    	window.print();
+    	//alert("Se envio copia para impresion");
+    	$("#registrar").show();$("#imprime").show();$("#buscaregistros").show();$("#top-of-page").show();
+    	$(".menu").show();
+    });
+
 });
 
 </script>

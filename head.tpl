@@ -112,13 +112,17 @@ function submitform()
 		</ul>
 	
 	</li>
-	<li {m3}><a href="">Farmacias</a></li>
+	<li {m3}><a href="">Farmacias</a>
+	<ul>
+			<li><a href="./index.php?ac=fa_aportes"><span class="icon" data-icon="Y"></span>Aportes</a></li>
+
+	</ul>
+	</li>
 	<li {m6}><a href="">Administra</a>
 	<ul>
-			<li><a href="./index.php?ac=registrocaja"><span class="icon" data-icon="("></span>Registra Caja</a></li>
-			<li><a href="./index.php?ac=volcadocaja"><span class="icon" data-icon="P"></span>Volcado Caja</a></li>
-			<li><a href="./index.php?ac=consultacaja"><span class="icon" data-icon="a"></span>Consulta Caja</a></li>
-		</ul>
+			<li><a href="./index.php?ac=registrocaja"><span class="icon" data-icon="("></span>Mov. de Caja</a></li>
+
+	</ul>
 	</li>
 	<li {m4}><a href=""><span class="icon" data-icon="R"></span>Acciones</a>
 		<ul>

@@ -153,3 +153,11 @@ color:#666;
     padding: 4px;
     display:none;
 }
+.fondo_celda {
+    background: #00AA02;
+    color: #0a0a0a;
+}
+.fondo_saldo {
+    background: #483D8B;
+    color: #ffffff;
+}
