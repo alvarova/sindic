@@ -16,7 +16,10 @@
     	foreach ($listado as $item) {
     		if ($item['fecha_baja']=="0000-00-00") {
 				$body->setCurrentBlock("listado");
-					$body->setVariable("dni", $item['nro_documento']);
+					if ($item['nro_documento']=="") {
+						$dni="<a href='' class='veraf_sindni' id='".$item['id_afiliado']."'>[ver]</a>";
+					}else { $dni=$item['nro_documento']; }
+					$body->setVariable("dni", $dni);
 					$body->setVariable("nombre", $item['nombre']);
 					$body->setVariable("fecha_ingreso", $item['fecha_ingreso']);
 					$body->setVariable("categoria", $item['id_categoria']);

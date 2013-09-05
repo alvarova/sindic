@@ -28,19 +28,9 @@
 
 	</div>
 
-	<div class="col_12" id="listado">
-	<form name='busca' action="./index.php?ac=registrocaja" method="post">
-		<h6>Afiliados a la fecha {rango} <span id='cant_selected'></span></h6>
-		<div class='col_4'></div>
-		<div class="col_8" id='buscaregistros'> 
-			Buscar registros (A&ntilde;o-Mes - ej. 2013-08)
-			<label for="fecha" >Fecha:</label>	<input type="text" value='{fechaconsulta}' name='fechaconsulta' id='fechaconsulta' />
-
-			<button type="submit" class="small green right" id='envia'>Consultar</button>
-			 
-		</div>
-	</form>
+	<div class="col_12 tabla" id="listado">
 	<!-- Table combined Styles -->
+	<h6>Afiliados a la fecha {rango} <span id='cant_selected'></span></h6>
 	<table class=" tight sortable" cellspacing="0" cellpadding="0">
 	<thead>
 		<tr>
@@ -83,14 +73,21 @@
 	<!-- END listado -->
 
 	</table>
-
+		<div id='imprime'>
+			<a class="button pop right" id='imprimir' href=""><span class="icon" data-icon="P"></span>Imprime</a>
+		</div>
 	</div>
-	<div class="col_3">
+	<div class="col_10 busca">
 
-	<div id='imprime'>
-		<a class="button pop" id='imprimir' href=""><span class="icon" data-icon="P"></span>Imprime</a>
-	</div>
+		<form name='busca' action="./index.php?ac=registrocaja" method="post">
+				<div class="col_8" id='buscaregistros'> 
+					Buscar resumen de pagos (a partir de A&ntilde;o-Mes - ej. 2013-08)
+					<label for="fecha" >Fecha:</label>	<input type="text" value='{fechaconsulta}' name='fechaconsulta' id='fechaconsulta' />
 
+					<button type="submit" class="small green right" id='envia'>Consultar</button>
+					 
+				</div>
+			</form>
 	</div>
 		<form id='verafiliado' action='./index.php?ac=afiliados' target='_blank' method='post' >
 			<input type='hidden' id='campo' name='campo' value='nro_documento' /><input id='criteriodni' type='hidden' name='criterio' value='' />
@@ -101,6 +98,12 @@
 $(document).ready(function() {
 
 $("#verafiliado").hide();
+var d = document.getElementById("idfarmacia").value;
+
+if (d=="") { 
+	$(".tabla").hide(); $(".busca").hide(); 
+	//alert(d);
+}
 // ***********************ELEMENTOS VALIDOS PARA EL FORMULARIO, PURGAR LO ANTERIOR *********************
 var today = new Date();
 var dd = today.getDate();
@@ -160,6 +163,15 @@ hoy=today;
     	$("#registrar").show();$("#imprime").show();$("#buscaregistros").show();$("#top-of-page").show();
     	$(".menu").show();
     });
+
+ $ (".veraf_sindni").click(function(){
+ 	event.preventDefault();
+ 	$ ("#campo").val('id_afiliado');
+ 	$ ("#criteriodni").val(this.id);
+    $ ("#verafiliado").submit();
+
+
+ });
 
 });
 

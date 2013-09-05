@@ -41,7 +41,33 @@ class Afiliado {
 			return (0);
 		}
  	}
+//Tabla de antiguedad segun CCT de ADEF http://www.adef.org.ar/legislacion/convenio-colectivo-de-trabajo-nro-41405
 
+	private function calculaPorcentajeAntiguedad($fechaIngreso)
+	{
+		$antig = antiguedad($fechaIngreso);
+		if (($antig >=1 ) && ($antig <2)) { $antiguedad=0.05;}
+		if (($antig >=2 ) && ($antig <5)) { $antiguedad=0.10;}
+		if (($antig >=5 ) && ($antig <10)) { $antiguedad=0.20;}
+		if (($antig >=10 ) && ($antig <15)) { $antiguedad=0.30;}
+		if (($antig >=10 ) && ($antig <15)) { $antiguedad=0.30;}
+		if (($antig >=15 ) && ($antig <20)) { $antiguedad=0.35;}
+		if (($antig >=20 ) && ($antig <25)) { $antiguedad=0.40;}
+		if ($antig >=25 ) {$antiguedad=0.50;}
+		return($antiguedad);
+
+		/*
+
+			CADETES-APRENDIZ AYUDANTE $ 3.816,17 
+			PERSONAL AUXILIAR INTERNO Y EXTERNO $ 4.029,87 
+			PERSONAL CON ASIGNACION ESPECIFICA $ 4.285,17 
+			AYDUDANTE EN GESTION DE FARMACIA $ 4.285,17 
+			PERSONAL EN GESTION DE FARMACIA $ 5.242,65 
+			FARMACEUTICO $ 5.800,57
+
+
+		*/
+	}		
 
 }
 
