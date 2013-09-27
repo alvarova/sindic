@@ -31,7 +31,12 @@ class Afiliado {
  	}
  	public function farmacia($idfarmacia)
  	{
- 		$consulta = "SELECT * FROM afiliados WHERE id_farmacia = '".$idfarmacia."' order by `nombre` ASC";
+
+//SELECT * FROM afiliados AS a LEFT JOIN convenio_categoria AS cct ON a.id_categoria = cct.id_categoria WHERE a.id_farmacia =  '".$idfarmacia."' ORDER BY  `nombre` ASC  		
+ 		$hoy=date("Y-m-d");
+
+ 		//$consulta = "SELECT * FROM afiliados   WHERE id_farmacia = '".$idfarmacia."' order by `nombre` ASC";
+ 		$consulta = "SELECT * FROM afiliados AS a LEFT JOIN convenio_categoria AS cct ON a.id_categoria = cct.id_categoria WHERE a.id_farmacia =  '".$idfarmacia."' and cct.fecha_inicio_convenio <= '".$hoy."' ORDER BY  cct.fecha_inicio_convenio, a.nombre ASC ";
 		//var_dump($consulta);
 		$rs=$this->_db->Execute($consulta);
 		//var_dump($rs);
@@ -43,7 +48,7 @@ class Afiliado {
  	}
 //Tabla de antiguedad segun CCT de ADEF http://www.adef.org.ar/legislacion/convenio-colectivo-de-trabajo-nro-41405
 
-	private function calculaPorcentajeAntiguedad($fechaIngreso)
+	public function calculaPorcentajeAntiguedad($fechaIngreso)
 	{
 		$antig = antiguedad($fechaIngreso);
 		if (($antig >=1 ) && ($antig <2)) { $antiguedad=0.05;}
@@ -67,7 +72,8 @@ class Afiliado {
 
 
 		*/
-	}		
+	}	
+
 
 }
 

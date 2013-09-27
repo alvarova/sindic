@@ -9,7 +9,7 @@
 	if (isset($_POST['idfarmacia'])) {
 
 		$afiliados = new Afiliado();
-
+		$liquidaMes=0;
 		$idfarmacia=$_POST['idfarmacia'];
 
     	$listado=$afiliados->farmacia($idfarmacia);
@@ -22,13 +22,18 @@
 					$body->setVariable("dni", $dni);
 					$body->setVariable("nombre", $item['nombre']);
 					$body->setVariable("fecha_ingreso", $item['fecha_ingreso']);
-					$body->setVariable("categoria", $item['id_categoria']);
-					$body->setVariable("antiguedad", "5");
-					$body->setVariable("sindical", "234"); 
-					$body->setVariable("art47", "234");
+					$body->setVariable("categoria", $item['basico']);
+					$calAntiguedad=round($item['basico']*$afiliados->calculaPorcentajeAntiguedad($item['fecha_ingreso']), 2);
+					$body->setVariable("antiguedad", $calAntiguedad);
+					$calSindical = round(($item['basico']*0.03),2);
+					$body->setVariable("sindical", $calSindical); 
+					$calArt = round(($item['basico']*0.01),2);
+					$body->setVariable("art47", $calArt);
+					$liquidaMes = $liquidaMes + round(($item['basico'] + $calAntiguedad + $calSindical + $calArt),2);
 				$body->parseCurrentBlock("listado");
 			}
 		}
+	$body->setVariable("liquidames", $liquidaMes);
 	} else { $body->setVariable("noselected", " selcted='selected' ");  }
 
 

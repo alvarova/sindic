@@ -73,6 +73,9 @@
 	<!-- END listado -->
 
 	</table>
+		<div id='liquidames' class='col_10 {muestra}'>
+			<span class="right">Total a liquidar $<b>{liquidames}</b></span>
+		</div>	
 		<div id='imprime'>
 			<a class="button pop right" id='imprimir' href=""><span class="icon" data-icon="P"></span>Imprime</a>
 		</div>
